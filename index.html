@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkedOutdoors — All the Community. None of the Noise.</title>
+<meta name="description" content="A living, local knowledge base for outdoor enthusiasts. Real trip reports, trail conditions, fishing updates, and meetups — filtered by where you are and what you love to do.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=Source+Serif+4:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:      #1a2e1a;
+    --forest-mid:  #2d4a2d;
+    --pine:        #3a5f3a;
+    --sage:        #7a9a6d;
+    --moss:        #a4b890;
+    --sand:        #e8dcc8;
+    --warm-sand:   #f5efe3;
+    --cream:       #faf8f4;
+    --amber:       #c8853a;
+    --amber-light: #e0a85c;
+    --bark:        #5c3d2e;
+    --stone:       #6b6560;
+    --charcoal:    #2c2825;
+    --white:       #ffffff;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--forest);
+    color: var(--cream);
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 5rem 2rem 4rem;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(58,95,58,0.35) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(200,133,58,0.12) 0%, transparent 60%),
+      linear-gradient(170deg, #0f1f0f 0%, #1a2e1a 45%, #232f1e 100%);
+    overflow: hidden;
+  }
+
+  /* Decorative rings */
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    border-radius: 50%;
+    border: 1px solid rgba(164,184,144,0.08);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    box-shadow: 0 0 0 80px rgba(164,184,144,0.04), 0 0 0 160px rgba(164,184,144,0.025);
+  }
+
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--amber-light);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .hero-logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    line-height: 1.05;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.4s;
+  }
+
+  .hero-logo span { color: var(--amber-light); }
+
+  .hero-tagline {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    color: var(--moss);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.55s;
+  }
+
+  .hero-description {
+    font-family: 'Source Serif 4', serif;
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    line-height: 1.75;
+    color: rgba(250,248,244,0.7);
+    max-width: 560px;
+    margin: 0 auto 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.7s;
+  }
+
+  /* ── SIGNUP FORM ── */
+  .signup-wrapper {
+    width: 100%;
+    max-width: 480px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.9s;
+    position: relative;
+    z-index: 2;
+  }
+
+  .signup-box {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+  }
+
+  .signup-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--cream);
+    margin-bottom: 0.4rem;
+    text-align: center;
+  }
+
+  .signup-box p {
+    font-size: 0.82rem;
+    color: var(--moss);
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.07);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .form-input::placeholder { color: rgba(250,248,244,0.35); }
+
+  .form-input:focus {
+    border-color: var(--amber);
+    background: rgba(255,255,255,0.1);
+  }
+
+  .form-submit {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: none;
+    background: var(--amber);
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    letter-spacing: 0.3px;
+  }
+
+  .form-submit:hover {
+    background: var(--amber-light);
+    transform: translateY(-1px);
+  }
+
+  .form-submit:active { transform: translateY(0); }
+
+  .signup-fine-print {
+    font-size: 0.72rem;
+    color: rgba(164,184,144,0.5);
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  /* Mailchimp hidden field */
+  .mc-hidden { position: absolute; left: -5000px; }
+
+  /* Success/error messages */
+  #mce-error-response, #mce-success-response {
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+
+  #mce-error-response { color: #ff6b6b; display: none; }
+  #mce-success-response { color: var(--moss); display: none; }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1.4s;
+  }
+
+  .scroll-indicator span {
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--moss);
+    opacity: 0.5;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--moss), transparent);
+    opacity: 0.4;
+    animation: scrollPulse 2s ease infinite 1.6s;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.2; transform: scaleY(1); }
+    50% { opacity: 0.6; transform: scaleY(1.1); }
+  }
+
+  /* ── SOCIAL PROOF STRIP ── */
+  .proof-strip {
+    background: rgba(0,0,0,0.2);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 1.2rem 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .proof-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--moss);
+    opacity: 0.7;
+  }
+
+  .proof-item svg { width: 16px; height: 16px; opacity: 0.6; }
+
+  /* ── FEATURES SECTION ── */
+  .features {
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--amber);
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    text-align: center;
+    color: var(--cream);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .section-sub {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.05rem;
+    color: rgba(250,248,244,0.55);
+    text-align: center;
+    max-width: 540px;
+    margin: 0 auto 4rem;
+    line-height: 1.7;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .feature-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: background 0.3s, border-color 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--amber), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .feature-card:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.12);
+    transform: translateY(-3px);
+  }
+
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .feature-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 0.6rem;
+  }
+
+  .feature-desc {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: rgba(250,248,244,0.55);
+  }
+
+  /* ── VERSUS SECTION ── */
+  .versus {
+    padding: 5rem 2rem;
+    background: rgba(0,0,0,0.15);
+    position: relative;
+    z-index: 1;
+  }
+
+  .versus-inner {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .versus-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 3rem;
+  }
+
+  .versus-table th {
+    padding: 1rem 1.5rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .versus-table th:first-child { text-align: left; color: var(--stone); }
+  .versus-table th:nth-child(2) { color: var(--stone); }
+  .versus-table th:last-child { color: var(--amber-light); }
+
+  .versus-table td {
+    padding: 0.9rem 1.5rem;
+    font-size: 0.88rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    text-align: center;
+  }
+
+  .versus-table td:first-child {
+    text-align: left;
+    color: rgba(250,248,244,0.7);
+    font-weight: 500;
+  }
+
+  .versus-table tr:last-child td { border-bottom: none; }
+
+  .check { color: var(--sage); font-size: 1rem; }
+  .cross { color: rgba(255,255,255,0.2); font-size: 1rem; }
+
+  /* ── FEED PREVIEW ── */
+  .preview {
+    padding: 6rem 2rem;
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .post-preview-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1rem;
+    transition: background 0.2s;
+  }
+
+  .post-preview-card:hover { background: rgba(255,255,255,0.07); }
+
+  .post-preview-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .post-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.72rem; color: white;
+    flex-shrink: 0;
+  }
+
+  .post-avatar.green { background: var(--pine); }
+  .post-avatar.amber { background: var(--amber); }
+  .post-avatar.sage  { background: var(--sage); }
+
+  .post-meta { flex: 1; }
+
+  .post-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--cream);
+  }
+
+  .post-loc {
+    font-size: 0.72rem;
+    color: var(--stone);
+  }
+
+  .post-loc .tag {
+    background: rgba(58,95,58,0.25);
+    color: var(--moss);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    font-size: 0.65rem;
+    margin-left: 4px;
+  }
+
+  .post-ago { font-size: 0.7rem; color: var(--stone); }
+
+  .post-text {
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: rgba(250,248,244,0.75);
+    margin-bottom: 12px;
+  }
+
+  .post-helpful {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--sage);
+  }
+
+  .post-helpful svg { width: 16px; height: 16px; }
+
+  /* ── BOTTOM CTA ── */
+  .bottom-cta {
+    padding: 6rem 2rem;
+    text-align: center;
+    background: linear-gradient(180deg, transparent 0%, rgba(200,133,58,0.06) 50%, transparent 100%);
+    position: relative;
+    z-index: 1;
+  }
+
+  .bottom-cta .hero-logo {
+    animation: none;
+    opacity: 1;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin-bottom: 1rem;
+  }
+
+  .bottom-cta p {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.05rem;
+    color: rgba(250,248,244,0.6);
+    max-width: 480px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    padding: 16px 40px;
+    border-radius: 50px;
+    background: var(--amber);
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    letter-spacing: 0.3px;
+  }
+
+  .cta-btn:hover { background: var(--amber-light); transform: translateY(-2px); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 2rem;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.78rem;
+    color: rgba(164,184,144,0.35);
+    position: relative;
+    z-index: 1;
+  }
+
+  footer a { color: rgba(164,184,144,0.5); text-decoration: none; }
+  footer a:hover { color: var(--moss); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .proof-strip { gap: 1.2rem; }
+    .versus-table th, .versus-table td { padding: 0.75rem 0.75rem; font-size: 0.8rem; }
+    .signup-box { padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<section class="hero">
+  <div class="hero-eyebrow">Coming Soon · Join the Waitlist</div>
+
+  <h1 class="hero-logo">Linked<span>Outdoors</span></h1>
+
+  <p class="hero-tagline">All the community. None of the noise.</p>
+
+  <p class="hero-description">
+    The hyperlocal outdoor community you've been missing. Real trip reports,
+    live trail conditions, fishing updates, and local meetups — filtered by
+    where you are and what you love to do. No ads. No algorithm. No politics.
+  </p>
+
+  <!-- MAILCHIMP SIGNUP FORM -->
+  <div class="signup-wrapper">
+    <div class="signup-box">
+      <h3>Be the first to know</h3>
+      <p>Early access for the Mid-Atlantic region · Launching 2025</p>
+
+      <form action="https://linkedoutdoors.us9.list-manage.com/subscribe/post?u=cee844b6d58bdb772b4308cc2&id=fa5912aa2e&f_id=00a202e1f0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
+        <div class="form-row">
+          <input type="text" name="FNAME" class="form-input" id="mce-FNAME" placeholder="First name (optional)">
+          <input type="email" name="EMAIL" class="form-input" id="mce-EMAIL" placeholder="Your email address" required>
+        </div>
+
+        <!-- Mailchimp bot protection — do not remove -->
+        <div class="mc-hidden" aria-hidden="true">
+          <input type="text" name="b_cee844b6d58bdb772b4308cc2_fa5912aa2e" tabindex="-1" value="">
+        </div>
+
+        <div id="mce-responses">
+          <div id="mce-error-response"></div>
+          <div id="mce-success-response"></div>
+        </div>
+
+        <button type="submit" name="subscribe" id="mc-embedded-subscribe" class="form-submit">
+          Join the Waitlist →
+        </button>
+      </form>
+
+      <p class="signup-fine-print">No spam, ever. Just a heads-up when we launch.</p>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ PROOF STRIP ═══════════════════════════ -->
+<div class="proof-strip">
+  <div class="proof-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    Hyperlocal by design
+  </div>
+  <div class="proof-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+    No ads. Ever.
+  </div>
+  <div class="proof-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Chronological feed
+  </div>
+  <div class="proof-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Real people, real experiences
+  </div>
+</div>
+
+<!-- ═══════════════════════════ FEATURES ═══════════════════════════ -->
+<section class="features">
+  <div class="section-label">What makes us different</div>
+  <h2 class="section-title">Built for people who actually go outside</h2>
+  <p class="section-sub">
+    Everything you loved about outdoor Facebook groups, rebuilt from scratch
+    without the garbage that drove you away.
+  </p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">📍</span>
+      <div class="feature-title">Hyperlocal Feed</div>
+      <p class="feature-desc">Your feed shows content from your region and your interests — nothing else. A fishing report from the Chesapeake Bay won't compete with noise from across the country.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🎣</span>
+      <div class="feature-title">Activity Filtering</div>
+      <p class="feature-desc">Fishing, hiking, kayaking, hunting, mountain biking — filter by what you do. Drill into sub-categories like bay fishing vs. stream fishing vs. fly fishing.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">⏱️</span>
+      <div class="feature-title">Chronological, Always</div>
+      <p class="feature-desc">No algorithm decides what you see. Posts appear in the order they were posted. If someone updated trail conditions an hour ago, you see it at the top.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">👍</span>
+      <div class="feature-title">Helpful — Not Likes</div>
+      <p class="feature-desc">Posts get "Helpful" votes, not likes. A detailed fishing report with conditions and gear gets upvoted. A vague selfie doesn't. The community rewards quality.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📅</span>
+      <div class="feature-title">Local Events & Meetups</div>
+      <p class="feature-desc">Saturday morning hikes. Dawn patrol fishing meetups. Trail cleanups. Find and RSVP to events in your area, or create your own with capacity limits and waitlists.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">⭐</span>
+      <div class="feature-title">Reputation That Means Something</div>
+      <p class="feature-desc">Earn ranks from Trail Hand to Master Guide based on the quality of your contributions. Expert badges tell newcomers exactly who to trust for local knowledge.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FEED PREVIEW ═══════════════════════════ -->
+<section class="preview">
+  <div class="section-label">What the feed looks like</div>
+  <h2 class="section-title" style="margin-bottom:0.5rem;">Real posts from real people</h2>
+  <p class="section-sub" style="margin-bottom:2.5rem;">This is what your feed looks like on day one — local, specific, and actually useful.</p>
+
+  <div class="post-preview-card">
+    <div class="post-preview-header">
+      <div class="post-avatar green">MK</div>
+      <div class="post-meta">
+        <div class="post-name">Mike K. ⭐</div>
+        <div class="post-loc">Eastern Shore, MD <span class="tag">Bay Fishing</span></div>
+      </div>
+      <div class="post-ago">2h ago</div>
+    </div>
+    <p class="post-text">Fished the bay side of Assateague yesterday evening. Caught three nice rockfish on white bucktails. Tide was going out — that's the move this time of year. Wind was calm, no bugs yet. Water temp around 56°.</p>
+    <div class="post-helpful">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+      Helpful · 24
+    </div>
+  </div>
+
+  <div class="post-preview-card">
+    <div class="post-preview-header">
+      <div class="post-avatar amber">JR</div>
+      <div class="post-meta">
+        <div class="post-name">Jen R.</div>
+        <div class="post-loc">Central MD <span class="tag">Family Hiking</span></div>
+      </div>
+      <div class="post-ago">4h ago</div>
+    </div>
+    <p class="post-text">Hit the Gunpowder Falls trail this morning with my kids (6 and 9). Totally doable for them — mostly flat with a few rocky sections. Parking lot was full by 10am so get there early. Saw a bald eagle near the river!</p>
+    <div class="post-helpful">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+      Helpful · 41
+    </div>
+  </div>
+
+  <div class="post-preview-card">
+    <div class="post-preview-header">
+      <div class="post-avatar sage">SL</div>
+      <div class="post-meta">
+        <div class="post-name">Sarah L.</div>
+        <div class="post-loc">Western MD <span class="tag">Backpacking</span></div>
+      </div>
+      <div class="post-ago">8h ago</div>
+    </div>
+    <p class="post-text">C&O towpath update: muddy after last night's rain. Avoid the first two miles from the Hancock trailhead. Everything past mile 3 is fine. Spring wildflowers starting to pop!</p>
+    <div class="post-helpful">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+      Helpful · 37
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ VERSUS ═══════════════════════════ -->
+<section class="versus">
+  <div class="versus-inner">
+    <div class="section-label">How we compare</div>
+    <h2 class="section-title">Why not just use what already exists?</h2>
+
+    <table class="versus-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Facebook Groups / Reddit</th>
+          <th>LinkedOutdoors</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Hyperlocal content filtering</td>
+          <td><span class="cross">✕</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>Chronological feed (no algorithm)</td>
+          <td><span class="cross">✕</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>No advertising</td>
+          <td><span class="cross">✕</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>Activity-specific filtering</td>
+          <td><span class="cross">✕</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>No political content</td>
+          <td><span class="cross">✕</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>Reputation based on usefulness</td>
+          <td><span class="cross">✕</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>Local events & meetups</td>
+          <td><span class="cross">✕</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ BOTTOM CTA ═══════════════════════════ -->
+<section class="bottom-cta">
+  <h2 class="hero-logo">Linked<span>Outdoors</span></h2>
+  <p>Join the waitlist and be first to know when we launch in your region. No spam — just one email when the doors open.</p>
+  <a href="#mc-embedded-subscribe-form" class="cta-btn" onclick="document.getElementById('mce-EMAIL').focus(); return false;">
+    Join the Waitlist →
+  </a>
+</section>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer>
+  <p>© 2025 LinkedOutdoors · <a href="mailto:john@linkedoutdoors.com">Contact</a> · Built for people who go outside</p>
+</footer>
+
+
+
+</body>
+</html>
